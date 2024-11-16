@@ -7,10 +7,14 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 // Get message history
 router.get("/:username", authMiddleware, async (req, res) => {
-  const { sender, receiver } = req.body;
+  const sender = req.params.username;
+  const receiver = req.query.receiver;
   try {
     const messages = await Message.find({
-      $or: [{ sender, receiver }],
+      $or: [
+        { sender, receiver },
+        { sender: receiver, receiver: sender },
+      ],
     }).sort({ timestamp: 1 });
     res.json(messages);
   } catch (err) {

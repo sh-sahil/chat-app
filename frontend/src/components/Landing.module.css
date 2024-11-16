@@ -1,9 +1,4 @@
-body {
-  margin: 0px;
-  padding: 0px;
-}
-
-.app {
+.topLevelLanding {
   background: hsla(212, 65%, 22%, 1);
 
   background: linear-gradient(
@@ -35,4 +30,49 @@ body {
 
   filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#14365D", endColorstr="#658FAC", GradientType=1 );
   height: 100vh;
+}
+
+.heading h1 {
+  font-size: 100px;
+  margin: 0px;
+  padding: 50px 0px 0px 50px;
+  /* background-color: black; */
+  color: white;
+}
+.heading h2 {
+  font-size: 30px;
+  margin: 0px;
+  padding-left: 50px;
+  color: #160b51;
+}
+
+.landingContainer {
+  width: 500px;
+  height: 250px;
+  /* background-color: bisque; */
+  color: white;
+  text-align: center;
+  margin: auto;
+  margin-top: 90px;
+}
+
+.landingContainer p {
+  font-size: 30px;
+  color: rgb(19 7 94);
+}
+
+.landingContainer button {
+  margin-left: 15px;
+  padding: 12px 20px;
+  background-color: #032e5c;
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.landingContainer button:hover {
+  background-color: #0056b3;
 }

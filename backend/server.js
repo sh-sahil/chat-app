@@ -33,7 +33,7 @@ app.use("/api/messages", messageRoutes);
 connectDB();
 
 io.on("connection", socket => {
-  console.log(`A user connected: ${socket.id}`);
+  // console.log(`A user connected: ${socket.id}`);
 
   socket.on("send-message", message => {
     console.log("Message received:", message);
@@ -42,6 +42,7 @@ io.on("connection", socket => {
       .save()
       .then(() => {
         io.emit("new-message", message);
+        console.log(message);
       })
       .catch(err => {
         console.error("Error saving message:", err.message);
