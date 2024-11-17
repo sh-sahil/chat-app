@@ -3,14 +3,13 @@
   margin: 0;
   padding: 0;
   background-image: url("/landing-bg.jpg");
-  background-repeat: no-repeat; /* Prevents the image from repeating */
-  background-size: cover; /* Makes the image cover the entire window */
-  background-position: center; /* Centers the image */
-  height: 100vh; /* Ensures the background image covers the entire viewport height */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
   width: 100vw;
 }
 
-/* Centering the signup container */
 .signupContainer {
   display: flex;
   justify-content: center;
@@ -18,7 +17,6 @@
   height: 100vh;
 }
 
-/* Styling the form */
 .signupForm {
   background-color: #fff;
   padding: 30px;
@@ -32,14 +30,12 @@
   text-align: center;
 }
 
-/* Styling the form heading */
 .signupForm h2 {
   margin-bottom: 20px;
   font-size: 24px;
   color: #333;
 }
 
-/* Styling the input fields */
 .inputField {
   width: 100%;
   padding: 10px;
@@ -55,7 +51,6 @@
   outline: none;
 }
 
-/* Styling the submit button */
 .submitBtn {
   padding: 12px 20px;
   background-color: #032e5c;
@@ -71,10 +66,15 @@
   background-color: #3d3d67;
 }
 
-/* Responsive styling */
 @media (max-width: 480px) {
+  .signupContainer {
+    padding: 0 20px;
+  }
+
   .signupForm {
+    width: 100%;
     padding: 20px;
+    margin: 0;
   }
 
   .inputField {

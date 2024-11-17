@@ -2,10 +2,8 @@ const express = require("express");
 const Message = require("../models/Message");
 const router = express.Router();
 
-// Middleware for authentication
 const authMiddleware = require("../middleware/authMiddleware");
 
-// Get message history
 router.get("/:username", authMiddleware, async (req, res) => {
   const sender = req.params.username;
   const receiver = req.query.receiver;

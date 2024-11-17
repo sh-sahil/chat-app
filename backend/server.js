@@ -5,7 +5,7 @@ const http = require("http");
 const socketIo = require("socket.io");
 const dotenv = require("dotenv");
 const Message = require("./models/Message");
-const User = require("./models/User"); // Import User model
+const User = require("./models/User");
 
 dotenv.config();
 
@@ -37,11 +37,9 @@ connectDB();
 io.on("connection", socket => {
   console.log(`A user connected: ${socket.id}`);
 
-  // Listen for the 'user-connected' event to set online status
   socket.on("user-connected", username => {
     console.log(`${username} is online`);
 
-    // Broadcast the user's online status to all clients
     socket.emit("user-status", { username, isOnline: false });
   });
 
@@ -49,14 +47,13 @@ io.on("connection", socket => {
     socket.emit("user-status", { username, isOnline: false });
   });
 
-  // Listen for messages and save them to the database
   socket.on("send-message", message => {
     console.log("Message received:", message);
     const newMessage = new Message(message);
     newMessage
       .save()
       .then(() => {
-        io.emit("new-message", message); // Broadcast new message to all users
+        io.emit("new-message", message);
         console.log("Message saved and broadcasted:", message);
       })
       .catch(err => {
@@ -64,7 +61,6 @@ io.on("connection", socket => {
       });
   });
 
-  // Update user's lastSeen status and set isOnline to false when they disconnect
   socket.on("disconnect", () => {
     console.log(`A user disconnected: ${socket.id}`);
   });

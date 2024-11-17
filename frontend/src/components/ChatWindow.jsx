@@ -12,10 +12,9 @@ function ChatWindow({ token, username, handleLogout }) {
   const [chatHistory, setChatHistory] = useState([]);
   const [message, setMessage] = useState("");
 
-  // Reference to the chat history container for auto-scrolling
+
   const chatHistoryRef = useRef(null);
 
-  // Fetch all users and generate avatars
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -25,7 +24,6 @@ function ChatWindow({ token, username, handleLogout }) {
         });
         const fetchedUsers = response.data;
 
-        // Directly assign avatars to users
         setUsers(
           fetchedUsers.map(user => ({
             ...user,
@@ -41,7 +39,6 @@ function ChatWindow({ token, username, handleLogout }) {
     fetchUsers();
   }, [token]);
 
-  // Fetch chat history for the selected user
   useEffect(() => {
     if (selectedUser) {
       const fetchChatHistory = async () => {
@@ -60,7 +57,6 @@ function ChatWindow({ token, username, handleLogout }) {
     }
   }, [selectedUser, username, token]);
 
-  // Handle new messages
   useEffect(() => {
     const handleNewMessage = newMessage => {
       if (
@@ -78,7 +74,6 @@ function ChatWindow({ token, username, handleLogout }) {
     };
   }, [selectedUser, username]);
 
-  // Handle user connection and disconnection
   useEffect(() => {
     socket.emit("user-connected", username);
 
@@ -94,7 +89,6 @@ function ChatWindow({ token, username, handleLogout }) {
     };
   }, [username]);
 
-  // Memoized sendMessage function to prevent re-creation on each render
   const sendMessage = useCallback(() => {
     if (!message || !selectedUser) return;
 
@@ -108,14 +102,12 @@ function ChatWindow({ token, username, handleLogout }) {
     setMessage("");
   }, [message, selectedUser, username]);
 
-  // Scroll chat to bottom after a new message
   useEffect(() => {
     if (chatHistoryRef.current) {
       chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
     }
   }, [chatHistory]);
 
-  // Handle "Enter" key press to send the message
   const handleKeyPress = event => {
     if (event.key === "Enter") {
       sendMessage();
@@ -124,7 +116,6 @@ function ChatWindow({ token, username, handleLogout }) {
 
   return (
     <div className={styles.chatContainer}>
-      {/* Navbar */}
       <div className={styles.navbar}>
         <span className={styles.username}>{username}</span>
         <button onClick={handleLogout}>Logout</button>
@@ -150,7 +141,6 @@ function ChatWindow({ token, username, handleLogout }) {
           ))}
         </div>
 
-        {/* Chat Window */}
         <div className={styles.chatWindow}>
           {selectedUser ? (
             <>
@@ -184,7 +174,7 @@ function ChatWindow({ token, username, handleLogout }) {
                   type="text"
                   value={message}
                   onChange={e => setMessage(e.target.value)}
-                  onKeyDown={handleKeyPress} // Add keypress handler
+                  onKeyDown={handleKeyPress} 
                   placeholder="Type a message"
                 />
                 <button onClick={sendMessage}>Send</button>

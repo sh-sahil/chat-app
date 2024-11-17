@@ -20,9 +20,8 @@ function Login({ setToken, setUsername }) {
       setToken(token);
       setUsername(user.username);
       localStorage.setItem("token", token);
-      localStorage.setItem("username", user.username); // Store the username
+      localStorage.setItem("username", user.username);
 
-      // Redirect to home page
       navigate("/");
     } catch (err) {
       console.log(err);
