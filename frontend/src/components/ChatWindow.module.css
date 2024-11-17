@@ -1,9 +1,11 @@
+/* Main container for the chat section */
 .chatContainer {
   display: flex;
   flex-direction: column;
   height: 100vh;
 }
 
+/* Navbar styles */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -31,11 +33,13 @@
   background-color: #e63946;
 }
 
+/* Main content layout */
 .mainContent {
   display: flex;
   height: calc(100vh - 50px); /* Subtract navbar height */
 }
 
+/* Left section (User List) */
 .userList {
   width: 30%;
   border-right: 1px solid #ccc;
@@ -58,35 +62,84 @@
   font-weight: bold;
 }
 
+/* Right section (Chat Window) */
 .chatWindow {
   width: 70%;
   display: flex;
   flex-direction: column;
-}
-
-.chatHeader {
   padding: 10px;
-  background-color: #007bff;
-  color: white;
-  font-size: 16px;
 }
 
+/* Chat header with the username of the receiver */
+/* Main container for the chat section */
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.charHeader {
+  padding: 30px;
+}
+
+.selectedChat {
+  color: white;
+}
+/* Chat history container */
 .chatHistory {
   flex: 1;
   padding: 10px;
   overflow-y: auto;
   background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column; /* This ensures messages are stacked vertically */
 }
 
+/* Message wrapper styles */
 .message {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  display: block; /* Ensure the message wrapper doesn't affect alignment */
+  max-width: 80%;
+  position: relative; /* To position the timestamp correctly */
 }
 
+.messageContent {
+  padding-bottom: 5px;
+  padding-right: 40px;
+}
+
+/* Sent messages (aligned to the right) */
+.sent {
+  background-color: #007bff;
+  color: white;
+  padding: 15px;
+  border-radius: 15px;
+  align-self: flex-end; /* Align user messages to the right */
+  position: relative; /* To place the timestamp correctly */
+}
+
+/* Received messages (aligned to the left) */
+.received {
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 15px;
+
+  border-radius: 15px;
+  align-self: flex-start; /* Align receiver messages to the left */
+  position: relative; /* To place the timestamp correctly */
+}
+
+/* Timestamp positioning */
 .timestamp {
   font-size: 0.8em;
-  color: gray;
+  /* color: black; */
+  position: absolute;
+  bottom: 3px;
+  right: 12px;
+  left: 5px;
+  text-align: right;
+  margin-top: 5px;
 }
-
 .chatInput {
   display: flex;
   padding: 10px;

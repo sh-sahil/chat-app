@@ -41,7 +41,6 @@ function ChatWindow({ token, username, handleLogout }) {
         (newMessage.sender === username && newMessage.receiver === selectedUser?.username) ||
         (newMessage.receiver === username && newMessage.sender === selectedUser?.username)
       ) {
-        console.log(newMessage);
         setChatHistory(prev => [...prev, { ...newMessage, timestamp: new Date().toISOString() }]);
       }
     });
@@ -62,7 +61,6 @@ function ChatWindow({ token, username, handleLogout }) {
     };
 
     socket.emit("send-message", newMessage);
-
     setMessage("");
   };
 
@@ -96,7 +94,7 @@ function ChatWindow({ token, username, handleLogout }) {
           {selectedUser ? (
             <>
               <div className={styles.chatHeader}>
-                Chat with <strong>{selectedUser.username}</strong>
+                Chat with <strong className={styles.selectedChat}>{selectedUser.username}</strong>
               </div>
               <div className={styles.chatHistory}>
                 {chatHistory.length > 0 ? (
@@ -107,9 +105,9 @@ function ChatWindow({ token, username, handleLogout }) {
                         msg.sender === username ? styles.sent : styles.received
                       }`}
                     >
-                      <strong>{msg.sender}:</strong> {msg.content}
+                      <div className={styles.messageContent}>{msg.content}</div>
                       <span className={styles.timestamp}>
-                        ({new Date(msg.timestamp).toLocaleTimeString()})
+                        {new Date(msg.timestamp).toLocaleTimeString()}
                       </span>
                     </div>
                   ))
