@@ -5,7 +5,7 @@ export default function Landing() {
   return (
     <div className={styles.topLevelLanding}>
       <div className={styles.heading}>
-        <h1>Chatting App</h1>
+        <h1>ChatNest</h1>
         <h2>Chat like never before!!</h2>
       </div>
 

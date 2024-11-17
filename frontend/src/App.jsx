@@ -23,6 +23,7 @@ function App() {
     localStorage.removeItem("username");
   };
 
+  console.log("App rerender");
   return (
     <Router>
       <div className="app">

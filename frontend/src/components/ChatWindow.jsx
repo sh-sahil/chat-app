@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
-import styles from "./ChatWindow.module.css"; // Import the CSS module
+import { faker } from "@faker-js/faker";
+import styles from "./ChatWindow.module.css";
 
 const socket = io("http://localhost:3000");
 
@@ -11,47 +12,90 @@ function ChatWindow({ token, username, handleLogout }) {
   const [chatHistory, setChatHistory] = useState([]);
   const [message, setMessage] = useState("");
 
-  // Fetch all users
+  // Reference to the chat history container for auto-scrolling
+  const chatHistoryRef = useRef(null);
+
+  // Fetch all users and generate avatars
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/users/", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then(response => setUsers(response.data))
-      .catch(error => console.error("Error fetching users", error));
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/users/", {
+          body: { username },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const fetchedUsers = response.data;
+
+        // Directly assign avatars to users
+        setUsers(
+          fetchedUsers.map(user => ({
+            ...user,
+            avatar: faker.image.avatar(),
+            isOnline: user.isOnline || true,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching users", error);
+      }
+    };
+
+    fetchUsers();
   }, [token]);
 
   // Fetch chat history for the selected user
   useEffect(() => {
     if (selectedUser) {
-      axios
-        .get(`http://localhost:3000/api/messages/${username}`, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { receiver: selectedUser.username },
-        })
-        .then(response => setChatHistory(response.data))
-        .catch(error => console.error("Error fetching messages", error));
-    }
-  }, [selectedUser, token, username]);
+      const fetchChatHistory = async () => {
+        try {
+          const response = await axios.get(`http://localhost:3000/api/messages/${username}`, {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { receiver: selectedUser.username },
+          });
+          setChatHistory(response.data);
+        } catch (error) {
+          console.error("Error fetching messages", error);
+        }
+      };
 
-  // Listen for new messages
+      fetchChatHistory();
+    }
+  }, [selectedUser, username, token]);
+
+  // Handle new messages
   useEffect(() => {
-    socket.on("new-message", newMessage => {
+    const handleNewMessage = newMessage => {
       if (
         (newMessage.sender === username && newMessage.receiver === selectedUser?.username) ||
         (newMessage.receiver === username && newMessage.sender === selectedUser?.username)
       ) {
         setChatHistory(prev => [...prev, { ...newMessage, timestamp: new Date().toISOString() }]);
       }
-    });
+    };
+
+    socket.on("new-message", handleNewMessage);
 
     return () => {
-      socket.off("new-message");
+      socket.off("new-message", handleNewMessage);
     };
   }, [selectedUser, username]);
 
-  // Send a message
-  const sendMessage = () => {
+  // Handle user connection and disconnection
+  useEffect(() => {
+    socket.emit("user-connected", username);
+
+    const handleUserStatus = ({ username: user, isOnline }) => {
+      setUsers(prev => prev.map(u => (u.username === user ? { ...u, isOnline } : u)));
+    };
+
+    socket.on("user-status", handleUserStatus);
+
+    return () => {
+      socket.emit("user-disconnected", username);
+      socket.off("user-status", handleUserStatus);
+    };
+  }, [username]);
+
+  // Memoized sendMessage function to prevent re-creation on each render
+  const sendMessage = useCallback(() => {
     if (!message || !selectedUser) return;
 
     const newMessage = {
@@ -62,6 +106,20 @@ function ChatWindow({ token, username, handleLogout }) {
 
     socket.emit("send-message", newMessage);
     setMessage("");
+  }, [message, selectedUser, username]);
+
+  // Scroll chat to bottom after a new message
+  useEffect(() => {
+    if (chatHistoryRef.current) {
+      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+    }
+  }, [chatHistory]);
+
+  // Handle "Enter" key press to send the message
+  const handleKeyPress = event => {
+    if (event.key === "Enter") {
+      sendMessage();
+    }
   };
 
   return (
@@ -72,61 +130,68 @@ function ChatWindow({ token, username, handleLogout }) {
         <button onClick={handleLogout}>Logout</button>
       </div>
 
-      {/* Main Content: Left Section (User List) and Right Section (Chat Window) */}
       <div className={styles.mainContent}>
-        {/* Left Section: User List */}
         <div className={styles.userList}>
+          <div className={styles.leftChatHeader}>Chats</div>
           {users.map(user => (
             <div
               key={user.username}
               className={`${styles.userItem} ${
                 selectedUser?.username === user.username ? styles.activeUser : ""
               }`}
-              onClick={() => setSelectedUser(user)} // Set the full user object
+              onClick={() => setSelectedUser(user)}
             >
-              {user.username}
+              <img src={user.avatar} alt="Profile" className={styles.profilePicture} />
+              <div className={styles.userDetails}>
+                <span className={styles.userName}>{user.username}</span>
+                <span className={styles.userStatus}>{user.isOnline ? "Online" : "Offline"}</span>
+              </div>
             </div>
           ))}
         </div>
 
-        {/* Right Section: Chat Window */}
+        {/* Chat Window */}
         <div className={styles.chatWindow}>
           {selectedUser ? (
             <>
               <div className={styles.chatHeader}>
-                Chat with <strong className={styles.selectedChat}>{selectedUser.username}</strong>
+                <img
+                  src={selectedUser.avatar}
+                  alt="Profile"
+                  className={styles.profilePictureHeader}
+                />
+                <span className={styles.chatHeaderUsername}>{selectedUser.username}</span>
               </div>
-              <div className={styles.chatHistory}>
-                {chatHistory.length > 0 ? (
-                  chatHistory.map((msg, idx) => (
-                    <div
-                      key={idx}
-                      className={`${styles.message} ${
-                        msg.sender === username ? styles.sent : styles.received
-                      }`}
-                    >
-                      <div className={styles.messageContent}>{msg.content}</div>
-                      <span className={styles.timestamp}>
-                        {new Date(msg.timestamp).toLocaleTimeString()}
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <p>No messages yet.</p>
-                )}
+
+              <div className={styles.chatHistory} ref={chatHistoryRef}>
+                {chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`${styles.message} ${
+                      msg.sender === username ? styles.sent : styles.received
+                    }`}
+                  >
+                    <div className={styles.messageContent}>{msg.content}</div>
+                    <span className={styles.timestamp}>
+                      {new Date(msg.timestamp).toLocaleTimeString()}
+                    </span>
+                  </div>
+                ))}
               </div>
+
               <div className={styles.chatInput}>
                 <input
                   type="text"
                   value={message}
                   onChange={e => setMessage(e.target.value)}
+                  onKeyDown={handleKeyPress} // Add keypress handler
                   placeholder="Type a message"
                 />
                 <button onClick={sendMessage}>Send</button>
               </div>
             </>
           ) : (
-            <div className={styles.noChatSelected}>Select a user to start chatting</div>
+            <div className={styles.noChatSelected}>Select a user to chat</div>
           )}
         </div>
       </div>
@@ -134,4 +199,4 @@ function ChatWindow({ token, username, handleLogout }) {
   );
 }
 
-export default ChatWindow;
+export default React.memo(ChatWindow);

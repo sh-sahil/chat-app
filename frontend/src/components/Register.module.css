@@ -2,36 +2,12 @@
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background: hsla(212, 65%, 22%, 1);
-
-  background: linear-gradient(
-    270deg,
-    hsla(212, 65%, 22%, 1) 0%,
-    hsla(205, 30%, 54%, 1) 54%,
-    hsla(198, 53%, 77%, 1) 91%,
-    hsla(196, 83%, 84%, 1) 100%,
-    hsla(239, 21%, 61%, 1) 100%
-  );
-
-  background: -moz-linear-gradient(
-    270deg,
-    hsla(212, 65%, 22%, 1) 0%,
-    hsla(205, 30%, 54%, 1) 54%,
-    hsla(198, 53%, 77%, 1) 91%,
-    hsla(196, 83%, 84%, 1) 100%,
-    hsla(239, 21%, 61%, 1) 100%
-  );
-
-  background: -webkit-linear-gradient(
-    270deg,
-    hsla(212, 65%, 22%, 1) 0%,
-    hsla(205, 30%, 54%, 1) 54%,
-    hsla(198, 53%, 77%, 1) 91%,
-    hsla(196, 83%, 84%, 1) 100%,
-    hsla(239, 21%, 61%, 1) 100%
-  );
-
-  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#14365D", endColorstr="#658FAC", GradientType=1 );
+  background-image: url("/landing-bg.jpg");
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  background-size: cover; /* Makes the image cover the entire window */
+  background-position: center; /* Centers the image */
+  height: 100vh; /* Ensures the background image covers the entire viewport height */
+  width: 100vw;
 }
 
 /* Centering the signup container */
@@ -40,7 +16,6 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  padding: 10px;
 }
 
 /* Styling the form */
@@ -48,7 +23,7 @@
   background-color: #fff;
   padding: 30px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgb(21, 19, 19);
   max-width: 400px;
   width: 100%;
   display: flex;
@@ -83,7 +58,7 @@
 /* Styling the submit button */
 .submitBtn {
   padding: 12px 20px;
-  background-color: #686396;
+  background-color: #032e5c;
   color: #fff;
   border: none;
   border-radius: 4px;
