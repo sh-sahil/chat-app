@@ -11,7 +11,7 @@ export default function Register({ setToken, username, setUsername }) {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/register", {
+      const response = await axios.post("https://chat-app-wxag.onrender.com/api/auth/register", {
         username,
         email,
         password,

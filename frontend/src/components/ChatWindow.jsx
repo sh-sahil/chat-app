@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 import { faker } from "@faker-js/faker";
 import styles from "./ChatWindow.module.css";
 
-const socket = io("http://localhost:3000");
+const socket = io("https://chat-app-wxag.onrender.com");
 
 function ChatWindow({ token, username, handleLogout }) {
   const [users, setUsers] = useState([]);
@@ -12,13 +12,12 @@ function ChatWindow({ token, username, handleLogout }) {
   const [chatHistory, setChatHistory] = useState([]);
   const [message, setMessage] = useState("");
 
-
   const chatHistoryRef = useRef(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/users/", {
+        const response = await axios.get("https://chat-app-wxag.onrender.com/api/users/", {
           body: { username },
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -43,10 +42,13 @@ function ChatWindow({ token, username, handleLogout }) {
     if (selectedUser) {
       const fetchChatHistory = async () => {
         try {
-          const response = await axios.get(`http://localhost:3000/api/messages/${username}`, {
-            headers: { Authorization: `Bearer ${token}` },
-            params: { receiver: selectedUser.username },
-          });
+          const response = await axios.get(
+            `https://chat-app-wxag.onrender.com/api/messages/${username}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+              params: { receiver: selectedUser.username },
+            }
+          );
           setChatHistory(response.data);
         } catch (error) {
           console.error("Error fetching messages", error);
@@ -174,7 +176,7 @@ function ChatWindow({ token, username, handleLogout }) {
                   type="text"
                   value={message}
                   onChange={e => setMessage(e.target.value)}
-                  onKeyDown={handleKeyPress} 
+                  onKeyDown={handleKeyPress}
                   placeholder="Type a message"
                 />
                 <button onClick={sendMessage}>Send</button>
